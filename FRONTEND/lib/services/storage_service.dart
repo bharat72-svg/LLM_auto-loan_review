@@ -4,11 +4,12 @@ import '../models/contract_model.dart';
 
 class StorageService {
   static const _emailKey = 'user_email';
+  static const _passwordKey = 'user_password';
   static const _historyKey = 'contract_history';
 
   static Future<bool> isLoggedIn() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getString(_emailKey) != null;
+    return prefs.getString(_emailKey) != null && prefs.getString(_passwordKey) != null;
   }
 
   static Future<void> saveEmail(String email) async {
@@ -16,9 +17,19 @@ class StorageService {
     await prefs.setString(_emailKey, email);
   }
 
+  static Future<void> savePassword(String hashedPassword) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_passwordKey, hashedPassword);
+  }
+
   static Future<String?> getEmail() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString(_emailKey);
+  }
+
+  static Future<String?> getPassword() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_passwordKey);
   }
 
   static Future<void> logout() async {
@@ -42,3 +53,4 @@ class StorageService {
         .toList();
   }
 }
+
