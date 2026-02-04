@@ -15,6 +15,7 @@ class DashboardScreen extends StatefulWidget {
   State<DashboardScreen> createState() => _DashboardScreenState();
 }
 
+
 class _DashboardScreenState extends State<DashboardScreen> {
   final _vinController = TextEditingController();
   bool _uploading = false;
@@ -39,55 +40,109 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
 
     if (result != null && result.files.first.bytes != null) {
-      setState(() => _uploading = true);
-    
-      try {
-        final pickedFile = result.files.first;
-        final bytes = pickedFile.bytes!;
-        final filename = pickedFile.name;
+      final pickedFile = result.files.first;
+      final bytes = pickedFile.bytes!;
+      final filename = pickedFile.name;
 
+      setState(() {
+        _uploading = true;
+      });
+
+    // Show snackbar instead of blocking dialog
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              const SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: Colors.white,
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Text('Analyzing $filename...'),
+              ),
+            ],
+          ),
+          duration: const Duration(minutes: 2),
+          backgroundColor: Colors.blue[700],
+        ),
+      );
+
+      try {
         // Upload file
         String text = await ApiService.uploadFile(bytes, filename);
       
-        // Analyze contract
+        // Analyze contract (runs in background)
         Map<String, dynamic> analysis = await ApiService.analyzeContract(
           text,
           _vinController.text,
         );
 
-      // Create contract model
+        // Extract fairness score
+        String fairnessScore = 'N/A';
+        if (analysis.containsKey('fairness_score')) {
+          var scoreData = analysis['fairness_score'];
+          if (scoreData is Map && scoreData.containsKey('fairness_score')) {
+            fairnessScore = scoreData['fairness_score'].toString();
+          } else {
+            fairnessScore = scoreData.toString();
+          }
+        }
+
+        // Create contract
         ContractAnalysis contract = ContractAnalysis(
           id: DateTime.now().millisecondsSinceEpoch.toString(),
           filename: filename,
-          slaAnalysis: analysis['sla_analysis'] ?? {},
+          slaAnalysis: analysis['sla_analysis'] ?? analysis['sla_extraction'] ?? {},
           vehicleDetails: analysis['vehicle_details'] ?? {},
-          fairnessScore: analysis['fairness_score']?.toString() ?? 'N/A',
+          fairnessScore: fairnessScore,
           timestamp: DateTime.now(),
         );
 
-        // Save to history
         await StorageService.saveAnalysis(contract);
 
-        // Navigate to results
         if (mounted) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ResultsScreen(contract: contract),
+          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Analysis complete for $filename'),
+              backgroundColor: Colors.green,
+              action: SnackBarAction(
+                label: 'View',
+                textColor: Colors.white,
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => ResultsScreen(contract: contract),
+                    ),
+                  );
+                },
+              ),
             ),
           );
         }
       } catch (e) {
         if (mounted) {
+          ScaffoldMessenger.of(context).hideCurrentSnackBar();
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('Error: $e'),
               backgroundColor: Colors.red,
+              duration: const Duration(seconds: 5),
             ),
           );
         }
       } finally {
-        setState(() => _uploading = false);
+        if (mounted) {
+          setState(() {
+            _uploading = false;
+          });
+        }
       }
     }
   }
@@ -161,11 +216,24 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 const SizedBox(height: 32),
                 TextField(
                   controller: _vinController,
-                  decoration: const InputDecoration(
+                  decoration:  InputDecoration(
                     labelText: 'Vehicle VIN (Optional)',
-                    prefixIcon: Icon(Icons.confirmation_number),
-                    border: OutlineInputBorder(),
-                    helperText: 'Enter VIN for vehicle history lookup',
+                    hintText: 'Enter VIN for vehicle history lookup',
+                    prefixIcon: const Icon(Icons.directions_car),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                    suffixIcon: IconButton(
+                      icon: const Icon(Icons.search),
+                      onPressed: () async {
+                        if (_vinController.text.isNotEmpty) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('VIN ${_vinController.text} will be used in analysis'),
+                              backgroundColor: Colors.blue,
+                            ),
+                          );
+                        }
+                      },
+                    ),      
                   ),
                   maxLength: 17,
                 ),
