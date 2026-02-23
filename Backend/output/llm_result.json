@@ -1,0 +1,75 @@
+{
+    "sla_extraction": {
+        "interest_rate_apr": {
+            "value": "8.5% per annum (fixed)",
+            "confidence": 1.0
+        },
+        "late_fee_penalty": {
+            "value": "Penal interest of 1% per annum on overdue amount (7-14 days delay), 2% per annum + ₹500 reminder cost (15-29 days delay), 3% per annum + ₹1,000 legal notice cost (30+ days delay). Other charges include ₹250 for cheque dishonor/ECS failure, ₹1,500 for late insurance renewal, and ₹100 per day (max ₹5,000/year) for non-submission of vehicle documents.",
+            "confidence": 1.0
+        },
+        "termination_clause": {
+            "value": "The Borrower may prepay the entire loan without penalty with 30 days' written notice. The Lender may terminate the agreement and initiate remedies including vehicle repossession, auction, and legal action if the Borrower defaults (e.g., EMI unpaid for more than 15 days, insurance lapses, hypothecation violated, or material misrepresentation).",
+            "confidence": 1.0
+        },
+        "down_payment": {
+            "value": "₹3,00,000",
+            "confidence": 1.0
+        },
+        "emi_amount": {
+            "value": 23648,
+            "confidence": 1.0
+        },
+        "insurance_mandatory": {
+            "value": true,
+            "confidence": 1.0
+        },
+        "processing_fees": {
+            "value": "₹12,870 (1.1% of loan amount)",
+            "confidence": 1.0
+        }
+    },
+    "fairness_score": {
+        "fairness_score": 87,
+        "fairness_level": "Fair",
+        "reasons": [
+            "Moderate interest rate",
+            "Penalty clearly defined",
+            "Restricted termination",
+            "High transparency",
+            "Low down payment"
+        ]
+    },
+    "contract_analysis": {
+        "summary": "This is a loan agreement with a fixed annual interest rate of 8.5%. You will need to make a down payment of ₹3,00,000 and pay a processing fee of ₹12,870 (which is 1.1% of the loan amount). Your monthly payment (EMI) will be ₹23,648. It is compulsory to have insurance for the financed asset. If you miss payments, specific penalties apply: a 1% annual penal interest for 7-14 day delays, escalating to 2% annual penal interest plus ₹500 for 15-29 day delays, and 3% annual penal interest plus ₹1,000 for delays over 30 days. There are also additional charges for issues like a bounced cheque (₹250), late insurance renewal (₹1,500), or not submitting vehicle documents (₹100 per day, up to ₹5,000 annually). You can repay the entire loan early without any penalty, provided you give 30 days' written notice. However, the lender can end the agreement and take action like repossessing the vehicle if you default, for example, by not paying an EMI for more than 15 days, letting your insurance lapse, violating the hypothecation agreement, or providing false information.",
+        "risk_flags": [
+            {
+                "clause": "Late Fee Penalty & Other Charges",
+                "description": "The tiered late fees increase significantly with delay duration, and additional fixed charges for cheque dishonor, late insurance renewal, and non-submission of vehicle documents can accumulate quickly, potentially increasing the overall cost substantially beyond the initial penal interest percentage. The 15-day grace period for EMI before full default is relatively short."
+            },
+            {
+                "clause": "Lender's Termination Clause",
+                "description": "The lender has broad rights to terminate the agreement and initiate remedies (repossession, auction, legal action) for various defaults. The threshold for EMI default (unpaid for more than 15 days) is quite strict, giving the lender significant power to act swiftly, which could put the borrower in a vulnerable position if they face even minor financial difficulties."
+            },
+            {
+                "clause": "Mandatory Insurance & Hypothecation",
+                "description": "While mandatory insurance is standard, the agreement explicitly states that 'insurance lapses' and 'hypothecation violated' are grounds for termination. This puts a significant ongoing responsibility on the borrower to maintain insurance and adhere to hypothecation terms, with severe consequences for any oversight."
+            }
+        ],
+        "negotiation_points": [
+            {
+                "point": "Grace Period for EMI Default",
+                "suggestion": "Negotiate a slightly longer grace period (e.g., 30 days instead of 15 days) before the lender can terminate the agreement and initiate severe remedies like repossession. This provides a larger buffer in case of unforeseen short-term financial issues."
+            },
+            {
+                "point": "Caps on Fixed Charges",
+                "suggestion": "While the percentage-based penal interest is defined, consider negotiating a cap or reduction on the fixed 'reminder cost' (₹500, ₹1,000) for longer delays and the daily/annual charges for non-submission of vehicle documents. This can limit the maximum additional costs incurred due to administrative oversights or minor delays."
+            },
+            {
+                "point": "Clarity on 'Material Misrepresentation'",
+                "suggestion": "Request a more specific definition or examples of what constitutes 'material misrepresentation' to avoid ambiguity and protect the borrower from termination due to minor or unintentional errors in the application process."
+            }
+        ],
+        "fairness_explanation": "The contract received a 'Fair' score of 87 due to several positive aspects: the interest rate of 8.5% is considered moderate and reasonable in the current market. The penalty structure, while strict, is clearly defined, ensuring transparency for the borrower regarding potential additional costs. The ability for the borrower to prepay the entire loan without penalty (with 30 days' notice) is a significant positive, offering flexibility. Overall, the contract demonstrates high transparency, with all key terms and conditions explicitly stated. Additionally, the specified down payment amount is considered 'low', which makes the loan more accessible to a wider range of borrowers."
+    }
+}
